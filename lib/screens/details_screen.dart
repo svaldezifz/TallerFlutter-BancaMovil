@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:banca_movil_app/screens/login_screen.dart';
 
-import '../custom_button_1.dart';
+import '../custom_button.dart';
 
 class DetailsScreenArguments {
   final String transactionName;
@@ -54,11 +54,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
       body: Column(
         children: [
           Text('Counter: $_counter'),
-          CustomButton1(
+          CustomButton(
             text: 'Inc counter',
             onPressed: _incrementCounter,
           ),
-          CustomButton1(
+          CustomButton(
             text: 'Go to Login',
             onPressed: () {
               final navigator = Navigator.of(context);

@@ -1,12 +1,13 @@
+import 'package:banca_movil_app/auth_bloc/auth_bloc.dart';
+import 'package:banca_movil_app/auth_bloc/models/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:banca_movil_app/custom_button_1.dart';
+import 'package:banca_movil_app/custom_button.dart';
 import 'package:banca_movil_app/screens/details_screen.dart';
 import 'package:banca_movil_app/screens/home_screen.dart';
 import 'package:banca_movil_app/screens/login_screen.dart';
-
-import 'custom_button_2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,29 +19,32 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+    return BlocProvider(
+      create: (context) => AuthBloc(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
 
-        fontFamily: 'DancingScript',
-        primarySwatch: Colors.red,
+          fontFamily: 'DancingScript',
+          primarySwatch: Colors.red,
+        ),
+        // home: const LoginScreen(),
+        initialRoute: LoginScreen.screenName,
+        routes: {
+          LoginScreen.screenName: (context) => const LoginScreen(),
+          HomeScreen.screenName: (context) => const HomeScreen(),
+          DetailsScreen.screenName: (context) => const DetailsScreen(),
+        },
       ),
-      // home: const LoginScreen(),
-      initialRoute: LoginScreen.screenName,
-      routes: {
-        LoginScreen.screenName: (context) => const LoginScreen(),
-        HomeScreen.screenName: (context) => const HomeScreen(),
-        DetailsScreen.screenName: (context) => const DetailsScreen(),
-      },
     );
   }
 }
@@ -190,13 +194,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: Text('1'),
               ),
-              CustomButton1(
+              CustomButton(
                 text: 'BOTON 1',
                 onPressed: () {
                   print('BOTON 1 PRESIONADO');
                 },
               ),
-              CustomButton2(
+              CustomButton(
                 text: 'BOTON 2',
                 onPressed: () {
                   print('BOTON 2 PRESIONADO');

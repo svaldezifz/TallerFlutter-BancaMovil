@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomButton2 extends StatelessWidget {
+class CustomButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
 
-  const CustomButton2({
+  const CustomButton({
     Key? key,
     required this.text,
     required this.onPressed,
@@ -27,22 +27,12 @@ class CustomButton2 extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(text),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+        ),
+      ),
     );
-    // return GestureDetector(
-    //   onTap: () {
-    //     print('object');
-    //   },
-    //   child: Container(
-    //     width: 100,
-    //     height: 40,
-    //     decoration: BoxDecoration(
-    //       color: Colors.red,
-    //       borderRadius: BorderRadius.circular(40),
-    //     ),
-    //     alignment: Alignment.center,
-    //     child: Text(text),
-    //   ),
-    // );
   }
 }
