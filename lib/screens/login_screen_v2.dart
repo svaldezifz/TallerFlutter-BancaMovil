@@ -1,0 +1,216 @@
+import 'dart:developer';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+
+class LoginScreenV2 extends StatefulWidget {
+  static const String screenName = 'loginScreen';
+
+  const LoginScreenV2({super.key});
+
+  @override
+  State<LoginScreenV2> createState() => _LoginScreenV2State();
+}
+
+class _LoginScreenV2State extends State<LoginScreenV2> {
+  late final TapGestureRecognizer _tapGestureRecognizer;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tapGestureRecognizer = TapGestureRecognizer()..onTap = _onSignUpTap;
+  }
+
+  void _onSignUpTap() {
+    log('SIGN UP');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final screenHeight = media.size.height;
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+        title: const Text(
+          'GIMME',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Container(
+        height: double.infinity,
+        color: Colors.black12,
+        child: Stack(
+          children: [
+            Container(
+              height: screenHeight * 0.60,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(60.0),
+                  bottomRight: Radius.circular(60.0),
+                ),
+              ),
+            ),
+            Positioned.fill(
+              top: kToolbarHeight + 20,
+              left: 30,
+              right: 30,
+              bottom: 20,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 30,
+                      ),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Login',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              label: Text('E-mail'),
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                              label: Text('Password'),
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: () {
+                                print('FORGOT PASSWORD');
+                              },
+                              child: const Text(
+                                'Forgot Password?',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: () {},
+                            style: ButtonStyle(
+                              padding: const MaterialStatePropertyAll(
+                                EdgeInsets.symmetric(
+                                  horizontal: 50,
+                                  vertical: 20,
+                                ),
+                              ),
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                                if (states.contains(MaterialState.disabled)) {
+                                  return Colors.grey;
+                                }
+                                return Colors.blue;
+                              }),
+                              foregroundColor:
+                                  MaterialStateProperty.resolveWith((states) => Colors.white),
+                            ),
+                            child: const Text('Login'),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            '- OR -',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              print('GOOGLE LOGIN');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(15),
+                            ),
+                            child: const Icon(
+                              Icons.g_mobiledata,
+                              color: Colors.white,
+                              size: 45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Don\'t have an Account? ',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Sign Up',
+                          recognizer: _tapGestureRecognizer,
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
