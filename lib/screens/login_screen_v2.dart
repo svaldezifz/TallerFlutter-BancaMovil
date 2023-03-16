@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:banca_movil_app/auth_bloc/auth_bloc.dart';
+import 'package:banca_movil_app/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreenV2 extends StatefulWidget {
   static const String screenName = 'loginScreen';
@@ -14,16 +17,20 @@ class LoginScreenV2 extends StatefulWidget {
 
 class _LoginScreenV2State extends State<LoginScreenV2> {
   late final TapGestureRecognizer _tapGestureRecognizer;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _tapGestureRecognizer = TapGestureRecognizer()..onTap = _onSignUpTap;
+    _tapGestureRecognizer = TapGestureRecognizer()..onTap = _handleSignUp;
   }
 
-  void _onSignUpTap() {
+  void _handleLogin() {
+    BlocProvider.of<AuthBloc>(context).add(SignInEvent());
+
+    // Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.screenName, (route) => false);
+  }
+
+  void _handleSignUp() {
     log('SIGN UP');
   }
 
@@ -52,6 +59,23 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
         color: Colors.black12,
         child: Stack(
           children: [
+            BlocListener<AuthBloc, AuthState>(
+              listenWhen: (previousState, currentState) {
+                if (previousState.authStatus == AuthStatus.signedOut &&
+                    currentState.authStatus == AuthStatus.signedIn) {
+                  return true;
+                }
+                return false;
+              },
+              listener: (context, state) {
+                print(state.user);
+                if (state.authStatus == AuthStatus.signedIn) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(HomeScreen.screenName, (route) => false);
+                }
+              },
+              child: const SizedBox(),
+            ),
             Container(
               height: screenHeight * 0.60,
               width: double.infinity,
@@ -63,149 +87,172 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                 ),
               ),
             ),
-            Positioned.fill(
-              top: kToolbarHeight + 20,
-              left: 30,
-              right: 30,
-              bottom: 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 30,
+            SizedBox(
+              height: double.infinity,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(30, kToolbarHeight + 20, 30, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Login',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                              label: Text('E-mail'),
-                              prefixIcon: Icon(
-                                Icons.email,
-                                color: Colors.blue,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 30,
+                        ),
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Login',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              label: Text('Password'),
-                              prefixIcon: Icon(
-                                Icons.lock,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: InkWell(
-                              onTap: () {
-                                print('FORGOT PASSWORD');
+                            const SizedBox(height: 20),
+                            BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                                return TextField(
+                                  decoration: InputDecoration(
+                                    label: const Text('E-mail'),
+                                    prefixIcon: const Icon(
+                                      Icons.email,
+                                      color: Colors.blue,
+                                    ),
+                                    errorText: state.emailError != InputError.none
+                                        ? state.emailError.name
+                                        : null,
+                                  ),
+                                  onChanged: (String email) {
+                                    BlocProvider.of<AuthBloc>(context)
+                                        .add(EmailChangedEvent(email: email));
+                                  },
+                                );
                               },
-                              child: const Text(
-                                'Forgot Password?',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                            ),
+                            const SizedBox(height: 20),
+                            BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+                              return TextField(
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  label: const Text('Password'),
+                                  prefixIcon: const Icon(
+                                    Icons.lock,
+                                    color: Colors.blue,
+                                  ),
+                                  errorText: state.passwordError != InputError.none
+                                      ? state.passwordError.name
+                                      : null,
+                                ),
+                                onChanged: (String password) {
+                                  BlocProvider.of<AuthBloc>(context)
+                                      .add(PasswordChangedEvent(password: password));
+                                },
+                              );
+                            }),
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  print('FORGOT PASSWORD');
+                                },
+                                child: const Text(
+                                  'Forgot Password?',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              padding: const MaterialStatePropertyAll(
-                                EdgeInsets.symmetric(
-                                  horizontal: 50,
-                                  vertical: 20,
+                            const SizedBox(height: 10),
+                            BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+                              return TextButton(
+                                onPressed: state.emailError != InputError.none ||
+                                        state.passwordError != InputError.none
+                                    ? null
+                                    : _handleLogin,
+                                style: ButtonStyle(
+                                  padding: const MaterialStatePropertyAll(
+                                    EdgeInsets.symmetric(
+                                      horizontal: 50,
+                                      vertical: 20,
+                                    ),
+                                  ),
+                                  shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  ),
+                                  backgroundColor: MaterialStateProperty.resolveWith((states) {
+                                    if (states.contains(MaterialState.disabled)) {
+                                      return Colors.grey;
+                                    }
+                                    return Colors.blue;
+                                  }),
+                                  foregroundColor:
+                                      MaterialStateProperty.resolveWith((states) => Colors.white),
                                 ),
+                                child: const Text('Login'),
+                              );
+                            }),
+                            const SizedBox(height: 20),
+                            const Text(
+                              '- OR -',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.black,
                               ),
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                print('GOOGLE LOGIN');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(15),
                               ),
-                              backgroundColor: MaterialStateProperty.resolveWith((states) {
-                                if (states.contains(MaterialState.disabled)) {
-                                  return Colors.grey;
-                                }
-                                return Colors.blue;
-                              }),
-                              foregroundColor:
-                                  MaterialStateProperty.resolveWith((states) => Colors.white),
+                              child: const Icon(
+                                Icons.g_mobiledata,
+                                color: Colors.white,
+                                size: 45,
+                              ),
                             ),
-                            child: const Text('Login'),
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            '- OR -',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              print('GOOGLE LOGIN');
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(15),
-                            ),
-                            child: const Icon(
-                              Icons.g_mobiledata,
-                              color: Colors.white,
-                              size: 45,
+                          ],
+                        ),
+                      ),
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        text: 'Don\'t have an Account? ',
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: 'Sign Up',
+                            recognizer: _tapGestureRecognizer,
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: 'Don\'t have an Account? ',
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Sign Up',
-                          recognizer: _tapGestureRecognizer,
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

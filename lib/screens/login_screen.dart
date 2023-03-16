@@ -75,16 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
             text: 'Sign In',
             onPressed: () {
               BlocProvider.of<AuthBloc>(context).add(
-                SignInEvent(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                ),
+                SignInEvent(),
               );
               BlocProvider.of<AuthBloc>(context).add(
-                SignInEvent(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                ),
+                SignInEvent(),
               );
               // context.read<AuthBloc>().add(
               //       SignInEvent(
