@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:banca_movil_app/screens/login_screen.dart';
+import 'package:banca_movil_app/features/auth/ui/screens/login_screen.dart';
 
-import '../custom_button.dart';
+import '../widgets/custom_button.dart';
 
 class DetailsScreenArguments {
   final String transactionName;

@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:banca_movil_app/auth_bloc/models/user.dart';
+import 'package:banca_movil_app/features/auth/bloc/models/user.dart';
 
 part 'auth_events.dart';
 part 'auth_state.dart';

@@ -1,14 +1,13 @@
+import 'package:banca_movil_app/features/auth/bloc/auth_bloc.dart';
+import 'package:banca_movil_app/features/auth/ui/screens/login_screen_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:banca_movil_app/custom_button.dart';
-import 'package:banca_movil_app/screens/details_screen.dart';
-import 'package:banca_movil_app/screens/home_screen.dart';
-import 'package:banca_movil_app/screens/login_screen.dart';
-import 'package:banca_movil_app/auth_bloc/auth_bloc.dart';
-import 'package:banca_movil_app/auth_bloc/models/user.dart';
-import 'package:banca_movil_app/screens/login_screen_v2.dart';
+import 'package:banca_movil_app/common/widgets/custom_button.dart';
+import 'package:banca_movil_app/common/screens/details_screen.dart';
+import 'package:banca_movil_app/common/screens/home_screen.dart';
+import 'package:banca_movil_app/features/auth/bloc/models/user.dart';
 
 void main() {
   runApp(const MyApp());

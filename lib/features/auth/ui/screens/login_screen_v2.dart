@@ -1,10 +1,11 @@
 import 'dart:developer';
 
-import 'package:banca_movil_app/auth_bloc/auth_bloc.dart';
-import 'package:banca_movil_app/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:banca_movil_app/common/screens/home_screen.dart';
+import 'package:banca_movil_app/features/auth/bloc/auth_bloc.dart';
 
 class LoginScreenV2 extends StatefulWidget {
   static const String screenName = 'loginScreen';

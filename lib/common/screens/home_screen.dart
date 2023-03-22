@@ -1,11 +1,10 @@
 import 'dart:developer';
 
-import 'package:banca_movil_app/auth_bloc/auth_bloc.dart';
-import 'package:banca_movil_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'package:banca_movil_app/screens/details_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:banca_movil_app/features/auth/bloc/auth_bloc.dart';
+import 'package:banca_movil_app/features/auth/ui/screens/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String screenName = 'homeScreen';
@@ -86,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               log('On STRECTH');
             },
             flexibleSpace: FlexibleSpaceBar(
-              stretchModes: [
+              stretchModes: const [
                 StretchMode.blurBackground,
                 StretchMode.zoomBackground,
               ],
