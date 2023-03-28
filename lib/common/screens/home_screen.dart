@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:banca_movil_app/features/products/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,6 +16,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,31 +104,41 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const SliverToBoxAdapter(
-            child: Placeholder(
-              fallbackHeight: 250,
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount: 10000,
-              (context, index) {
-                log("Item $index");
-                return Container(
-                  height: 200,
-                  alignment: Alignment.center,
-                  color: Colors.primaries[index % Colors.primaries.length],
-                  child: Text(
-                    '${index + 1}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 100,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
+          SliverToBoxAdapter(
+            child: BlocBuilder<ProductBloc, ProductState>(
+              builder: (context, state) {
+                if (state.isLoadingProducts) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return const SizedBox();
               },
             ),
+          ),
+          BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  childCount: state.products.length,
+                  (context, index) {
+                    final product = state.products[index];
+                    print(product);
+                    return Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      color: Colors.primaries[index % Colors.primaries.length],
+                      child: Text(
+                        product.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),

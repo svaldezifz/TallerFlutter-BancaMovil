@@ -1,5 +1,6 @@
 import 'package:banca_movil_app/features/auth/bloc/auth_bloc.dart';
 import 'package:banca_movil_app/features/auth/ui/screens/login_screen_v2.dart';
+import 'package:banca_movil_app/features/products/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -18,8 +19,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (BuildContext context) => AuthBloc(),
+        ),
+        BlocProvider<ProductBloc>(
+          create: (BuildContext context) => ProductBloc(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
