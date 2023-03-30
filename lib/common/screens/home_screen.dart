@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:banca_movil_app/common/widgets/product_card.dart';
 import 'package:banca_movil_app/features/products/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent());
+      BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent(isFirstPage: true));
     });
   }
 
@@ -68,79 +69,105 @@ class _HomeScreenState extends State<HomeScreen> {
       //     ),
       //   ],
       // ),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            title: Text("Home Screen"),
-            collapsedHeight: 200,
-            // expandedHeight: 200,
-            floating: true,
-            // pinned: true,
-            snap: true,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  BlocProvider.of<AuthBloc>(context).add(SignOutEvent());
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(LoginScreen.screenName, (route) => false);
+      body: RefreshIndicator(
+        onRefresh: () async {
+          log('On REFRESH');
+          BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent(isFirstPage: true));
+        },
+        child: NotificationListener<ScrollEndNotification>(
+          onNotification: (ScrollEndNotification scrollInfo) {
+            if (scrollInfo.metrics.maxScrollExtent > 0.0 &&
+                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+              BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent(isFirstPage: false));
+              return true;
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                collapsedHeight: 150,
+                // expandedHeight: 200,
+                floating: true,
+                // pinned: true,
+                snap: true,
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthBloc>(context).add(SignOutEvent());
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil(LoginScreen.screenName, (route) => false);
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
+                stretch: true,
+                stretchTriggerOffset: 80,
+                onStretchTrigger: () async {
+                  log('On STRECTH');
+                  // BlocProvider.of<ProductBloc>(context).add(GetProductPageEvent(isFirstPage: true));
                 },
-                icon: const Icon(Icons.logout),
+                flexibleSpace: FlexibleSpaceBar(
+                  title: const Text("My Products"),
+                  titlePadding: const EdgeInsets.all(15.0),
+                  stretchModes: const [
+                    StretchMode.blurBackground,
+                    StretchMode.zoomBackground,
+                  ],
+                  background: Image.network(
+                    "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ],
-            stretch: true,
-            stretchTriggerOffset: 80,
-            onStretchTrigger: () async {
-              log('On STRECTH');
-            },
-            flexibleSpace: FlexibleSpaceBar(
-              stretchModes: const [
-                StretchMode.blurBackground,
-                StretchMode.zoomBackground,
-              ],
-              background: Image.network(
-                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                fit: BoxFit.cover,
+              BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      childCount: state.products.length,
+                      (context, index) {
+                        final product = state.products[index];
+                        log('PRODUCT INDEX: $index');
+                        // if (index + 1 == state.products.length) {
+                        //   BlocProvider.of<ProductBloc>(context)
+                        //       .add(GetProductPageEvent(isFirstPage: false));
+                        // }
+                        return ProductCard(
+                          product: product,
+                          index: index,
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: BlocBuilder<ProductBloc, ProductState>(
-              builder: (context, state) {
-                if (state.isLoadingProducts) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                return const SizedBox();
-              },
-            ),
-          ),
-          BlocBuilder<ProductBloc, ProductState>(
-            builder: (context, state) {
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  childCount: state.products.length,
-                  (context, index) {
-                    final product = state.products[index];
-                    print(product);
-                    return Container(
-                      height: 200,
-                      alignment: Alignment.center,
-                      color: Colors.primaries[index % Colors.primaries.length],
-                      child: Text(
-                        product.title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+              SliverToBoxAdapter(
+                child: BlocBuilder<ProductBloc, ProductState>(
+                  builder: (context, state) {
+                    if (state.isLoadingProducts) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: CircularProgressIndicator(),
                         ),
-                      ),
-                    );
+                      );
+                    }
+                    if (state.isLastPage) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text('No hay más productos'),
+                        ),
+                      );
+                    }
+                    return const SizedBox();
                   },
                 ),
-              );
-            },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

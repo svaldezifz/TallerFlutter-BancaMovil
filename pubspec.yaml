@@ -38,6 +38,7 @@ dependencies:
   http: ^0.13.5
   equatable: ^2.0.5
   flutter_bloc: ^8.1.2
+  bloc_concurrency: ^0.2.1
   either_dart: ^0.3.0
   json_annotation: ^4.8.0
 

@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           // fontFamily: 'DancingScript',
           primarySwatch: Colors.blue,
         ),
-        initialRoute: LoginScreenV2.screenName,
+        initialRoute: HomeScreen.screenName,
         routes: {
           LoginScreenV2.screenName: (context) => const LoginScreenV2(),
           HomeScreen.screenName: (context) => const HomeScreen(),
