@@ -10,11 +10,13 @@ import 'package:http/http.dart' as http;
 import 'package:banca_movil_app/features/products/bloc/models/product.dart';
 
 class ProductRepository {
+  final defaultClient = http.Client();
   final String baseUrl = 'api.storerestapi.com';
 
   FutureOr<Either<GetProductException, ProductResponse>> getProductPage({
     int page = 1,
     int limit = 10,
+    http.Client? client,
   }) async {
     final queryParameters = {
       'page': page.toString(),
@@ -25,7 +27,7 @@ class ProductRepository {
       '/products',
       queryParameters,
     );
-    final response = await http.get(uri);
+    final response = await (client ?? defaultClient).get(uri);
     debugPrint(response.body);
     if (response.statusCode != HttpStatus.ok) {
       return Left(GetProductException());

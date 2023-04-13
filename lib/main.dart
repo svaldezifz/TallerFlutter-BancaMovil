@@ -11,6 +11,7 @@ import 'package:banca_movil_app/common/screens/home_screen.dart';
 import 'package:banca_movil_app/features/auth/bloc/models/user.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
           // fontFamily: 'DancingScript',
           primarySwatch: Colors.blue,
         ),
-        initialRoute: HomeScreen.screenName,
+        initialRoute: LoginScreenV2.screenName,
         routes: {
           LoginScreenV2.screenName: (context) => const LoginScreenV2(),
           HomeScreen.screenName: (context) => const HomeScreen(),

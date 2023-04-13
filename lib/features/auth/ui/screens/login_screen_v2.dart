@@ -110,7 +110,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text(
-                              'Login',
+                              'Login Screen',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,
@@ -122,6 +122,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                             BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, state) {
                                 return TextField(
+                                  key: const Key('EmailTextField'),
                                   decoration: InputDecoration(
                                     label: const Text('E-mail'),
                                     prefixIcon: const Icon(
@@ -142,6 +143,7 @@ class _LoginScreenV2State extends State<LoginScreenV2> {
                             const SizedBox(height: 20),
                             BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                               return TextField(
+                                key: const Key('PasswordTextField'),
                                 obscureText: true,
                                 decoration: InputDecoration(
                                   label: const Text('Password'),
